@@ -4,7 +4,7 @@
 from decimal import Decimal
 from decimal import getcontext
 import time
-from multiprocessing.dummy import Pool as Pool #pip3 install multiproces
+from multiprocessing.dummy import Pool as Pool #pip3 install multiprocess
 from tqdm import tqdm #pip3 install tqdm
 
 threads=4 #threads number
