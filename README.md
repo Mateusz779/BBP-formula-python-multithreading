@@ -2,6 +2,6 @@
 
 Required packages:
 
-pip3 install tqdm multiproces
+pip3 install tqdm multiprocess
 
 
