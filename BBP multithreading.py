@@ -1,3 +1,6 @@
+#
+#   @Mateusz779
+#
 from decimal import Decimal
 from decimal import getcontext
 import time
