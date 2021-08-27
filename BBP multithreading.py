@@ -13,37 +13,39 @@ from multiprocessing.dummy import Pool as Pool
 from tqdm import tqdm 
 import argparse
 
-parser = argparse.ArgumentParser(description='The script computes the number pi.')
-parser.add_argument('-t', '--threads', help="Number of threads deffault 4", required=False,type=int, default=4)
-parser.add_argument('-c', '--count', help="Number of numbers after the point deffault 10000", required=False,type=int, default=10000)
-parser.add_argument('-f', '--filename', help="File to save result", required=False)
-args = parser.parse_args()
-
-threads=args.threads
-count = args.count #number of numbers after the point
-
-thread_list = []
-count=count+1
-list_all = {}
-pbar = tqdm(total =count)
-
 def pi(start):
     getcontext().prec=count-start
     for k in range (start,int(start+one_count)):
         pbar.update(1)
         list_all[k]=(1/Decimal(16)**k * (Decimal(4)/(8*k+1) - Decimal(2)/(8*k+4) - Decimal(1)/(8*k+5) - Decimal(1)/(8*k+6)))  
 
-start_table = []
-if count >500:
-    tasks=int(threads*(count/1000))
-else:
-    tasks=1
-
-one_count=int(count/tasks)
-
 def main():
+    global count
+    global pbar
+    global list_all
+    global tasks
+    global one_count
+    parser = argparse.ArgumentParser(description='The script computes the number pi.')
+    parser.add_argument('-t', '--threads', help="Number of threads default 4", required=False,type=int, default=4)
+    parser.add_argument('-c', '--count', help="Number of numbers after the point default 10000", required=False,type=int, default=10000)
+    parser.add_argument('-f', '--filename', help="File to save result", required=False)
+    args = parser.parse_args()
+
+    threads=args.threads
+    count = args.count #number of numbers after the point
+
+    start_table = []
+    if count > 500:
+        tasks=int(threads*(count/1000))
+    else:
+        tasks=1
+    count=count+1
+    list_all = {}
+    pbar = tqdm(total = count)
+    one_count=int(count/tasks)
     start_table = [int((one_count * i)) for i in range(tasks)]
 
+    
     start = time.time()
     with Pool(processes=threads) as pool:
         results = pool.starmap(
