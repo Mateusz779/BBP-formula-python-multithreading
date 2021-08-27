@@ -1,14 +1,26 @@
-#
-#   @Mateusz779
-#
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+
+@author: Mateusz779
+
+"""
 from decimal import Decimal
 from decimal import getcontext
 import time
-from multiprocessing.dummy import Pool as Pool #pip3 install multiprocess
-from tqdm import tqdm #pip3 install tqdm
+from multiprocessing.dummy import Pool as Pool
+from tqdm import tqdm 
+import argparse
 
-threads=4 #threads number
-count = 10000 #number of numbers after the point
+parser = argparse.ArgumentParser(description='The script computes the number pi.')
+parser.add_argument('-t', '--threads', help="Number of threads deffault 4", required=False,type=int, default=4)
+parser.add_argument('-c', '--count', help="Number of numbers after the point deffault 10000", required=False,type=int, default=10000)
+parser.add_argument('-f', '--filename', help="File to save result", required=False)
+args = parser.parse_args()
+
+threads=args.threads
+count = args.count #number of numbers after the point
 
 thread_list = []
 count=count+1
@@ -23,34 +35,43 @@ def pi(start):
 
 start_table = []
 if count >500:
-    th=int(threads*(count/1000))
+    tasks=int(threads*(count/1000))
 else:
-    th=1
-while count%th!=0:
-    if count>th:
-        th=th+1
-    else:
-        th=th-1
+    tasks=1
 
-one_count=int(count/th)
+one_count=int(count/tasks)
 
-for i in range(th):
-    start_table.append(int((one_count*i)))
+def main():
+    start_table = [int((one_count * i)) for i in range(tasks)]
 
-start = time.time()
-with Pool(processes=threads) as pool:
-    results = pool.starmap(
-        pi, 
-        iterable=zip(start_table),
-        chunksize=100000 // threads
-    )
-end = time.time()
-result=0
-getcontext().prec=count
-sort = sorted(list_all.items())
-for i in sort:
-    result=result+i[1]
+    start = time.time()
+    with Pool(processes=threads) as pool:
+        results = pool.starmap(
+            pi, 
+            iterable=zip(start_table),
+            chunksize=100000 // threads
+        )
+    end = time.time()
+    result=0
+    getcontext().prec=count
+    sort = sorted(list_all.items())
+    for i in sort:
+        result=result+i[1]
 
-print(Decimal(result))
-print("\n\n")
-print("Elapsed time: ",end - start,"s\n")
+    print(Decimal(result))
+    print("\n\n")
+    print("Elapsed time: ",end - start,"s\n")
+    if args.filename!=None:
+        f = open(args.filename, "w")
+        f.write(str(Decimal(result)))
+        f.close()
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
