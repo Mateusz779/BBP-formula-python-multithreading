@@ -10,14 +10,16 @@ from decimal import Decimal
 from decimal import getcontext
 import time
 from multiprocessing.dummy import Pool as Pool
-from tqdm import tqdm 
+from tqdm import tqdm
 import argparse
 
+
 def pi(start):
-    getcontext().prec=count-start
-    for k in range (start,int(start+one_count)):
+    getcontext().prec = count - start
+    for k in range(start, int(start + one_count)):
         pbar.update(1)
-        list_all[k]=(1/Decimal(16)**k * (Decimal(4)/(8*k+1) - Decimal(2)/(8*k+4) - Decimal(1)/(8*k+5) - Decimal(1)/(8*k+6)))  
+        list_all[k] = (1/Decimal(16)**k * (Decimal(4)/(8*k+1) - Decimal(2)/(8*k+4) - Decimal(1)/(8*k+5) - Decimal(1)/(8*k+6)))
+
 
 def main():
     global count
@@ -26,7 +28,7 @@ def main():
     global tasks
     global one_count
     parser = argparse.ArgumentParser(description='The script computes the number pi.')
-    parser.add_argument('-t', '--threads', help="Number of threads default 4", required=False,type=int, default=4)
+    parser.add_argument('-t', '--threads', help="Number of threads default 4", required=False, type=int, default=4)
     parser.add_argument('-c', '--count', help="Number of numbers after the point default 10000", required=False,type=int, default=10000)
     parser.add_argument('-f', '--filename', help="File to save result", required=False)
     args = parser.parse_args()
@@ -44,12 +46,11 @@ def main():
     pbar = tqdm(total = count)
     one_count=int(count/tasks)
     start_table = [int((one_count * i)) for i in range(tasks)]
-
     
     start = time.time()
     with Pool(processes=threads) as pool:
         results = pool.starmap(
-            pi, 
+            pi,
             iterable=zip(start_table),
             chunksize=100000 // threads
         )
@@ -69,11 +70,3 @@ def main():
         f.close()
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
